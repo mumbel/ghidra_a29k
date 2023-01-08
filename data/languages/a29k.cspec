@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<compiler_spec>
+  <data_organization>
+    <default_pointer_alignment value="4" />
+    <pointer_size value="4" />
+    <short_size value="2" />
+    <integer_size value="4" />
+    <long_size value="4" />
+    <long_long_size value="8" />
+    <float_size value="4" />
+    <double_size value="8" />
+    <size_alignment_map>
+      <entry size="1" alignment="1" />
+      <entry size="2" alignment="2" />
+      <entry size="4" alignment="4" />
+      <entry size="8" alignment="4" />
+    </size_alignment_map>
+  </data_organization>
+  <global>
+    <range space="ram"/>
+    <range space="record"/>
+    <register name="gr3"/>
+    <register name="rsp"/>
+    <register name="gr2"/>
+    <register name="gr3"/>
+    <register name="gr64"/>
+    <register name="gr65"/>
+    <register name="gr66"/>
+    <register name="gr67"/>
+    <register name="gr68"/>
+    <register name="gr69"/>
+    <register name="gr70"/>
+    <register name="gr71"/>
+    <register name="gr72"/>
+    <register name="gr73"/>
+    <register name="gr74"/>
+    <register name="gr75"/>
+    <register name="gr76"/>
+    <register name="gr77"/>
+    <register name="gr78"/>
+    <register name="gr79"/>
+    <register name="gr80"/>
+    <register name="gr81"/>
+    <register name="gr82"/>
+    <register name="gr83"/>
+    <register name="gr84"/>
+    <register name="gr85"/>
+    <register name="gr86"/>
+    <register name="gr87"/>
+    <register name="gr88"/>
+    <register name="gr89"/>
+    <register name="gr90"/>
+    <register name="gr91"/>
+    <register name="gr92"/>
+    <register name="gr93"/>
+    <register name="gr94"/>
+    <register name="gr95"/>
+    <register name="gr96"/>
+    <register name="gr97"/>
+    <register name="gr98"/>
+    <register name="gr99"/>
+    <register name="gr100"/>
+    <register name="gr101"/>
+    <register name="gr102"/>
+    <register name="gr103"/>
+    <register name="gr104"/>
+    <register name="gr105"/>
+    <register name="gr106"/>
+    <register name="gr107"/>
+    <register name="gr108"/>
+    <register name="gr109"/>
+    <register name="gr110"/>
+    <register name="gr111"/>
+    <register name="gr112"/>
+    <register name="gr113"/>
+    <register name="gr114"/>
+    <register name="gr115"/>
+    <register name="gr116"/>
+    <register name="gr117"/>
+    <register name="gr118"/>
+    <register name="gr119"/>
+    <register name="gr120"/>
+    <register name="tav"/>
+    <register name="tpc"/>
+    <register name="lrp"/>
+    <register name="slp"/>
+    <register name="msp"/>
+    <register name="rab"/>
+    <register name="rfb"/>
+  </global>
+  <returnaddress>
+    <register name="raddr"/>
+  </returnaddress>
+  <stackpointer register="rsp" space="record" growth="negative"/>
+  <default_proto>
+    <prototype name="__stdcall" extrapop="0" stackshift="0" strategy="register">
+      <input>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr2"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr3"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr4"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr5"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr6"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr7"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr8"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr9"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr10"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr11"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr12"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr13"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr14"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr15"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr16"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="lr17"/>
+	</pentry>
+        <pentry minsize="1" maxsize="500" align="4">
+          <addr offset="0" space="record"/>
+        </pentry>
+      </input>
+      <output killedbycall="true">
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr96"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr97"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr98"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr99"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr100"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr101"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr102"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr103"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr104"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr105"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr106"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr107"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr108"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr109"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr110"/>
+	</pentry>
+	<pentry minsize="1" maxsize="4">
+	  <register name="gr111"/>
+	</pentry>
+        <pentry minsize="1" maxsize="500" align="4">
+          <addr offset="0" space="record"/>
+        </pentry>
+      </output>
+      <killedbycall>
+	<register name="gr112"/> <!-- may be specifc type of call -->
+	<register name="gr113"/>
+	<register name="gr114"/>
+	<register name="gr115"/>
+	<register name="gr116"/>
+	<register name="gr117"/>
+	<register name="gr118"/>
+	<register name="gr119"/>
+	<register name="gr120"/>
+	<register name="tav"/> <!-- any call -->
+	<register name="tpc"/> <!-- any call -->
+	<register name="lrp"/>
+	<register name="slp"/>
+      </killedbycall>
+    </prototype>
+  </default_proto>
+</compiler_spec>

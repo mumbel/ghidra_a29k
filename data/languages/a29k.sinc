@@ -1,0 +1,1539 @@
+
+define alignment=4;
+
+define space ram type=ram_space size=4 default;
+
+define space record type=ram_space size=4;
+
+define space register type=register_space size=4;
+
+# IP
+# rsp - register stack pointer
+# raddr - return address
+# fp - frame pointer
+# tav - trap handler argument
+# tpc - trap handler return address
+# lrp - large return pointer
+# slp - static link pointer
+# msp - memory register stack pointer
+# rab - register allocate bound
+# rfb - register free bound
+
+#TODO  1 and 131 are stackpointer?
+define register offset=0x00 size=4 [
+ gr0 rsp gr2 gr3 _ _ _ _
+ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _
+ gr64 gr65 gr66 gr67 gr68 gr69 gr70 gr71
+ gr72 gr73 gr74 gr75 gr76 gr77 gr78 gr79
+ gr80 gr81 gr82 gr83 gr84 gr85 gr86 gr87
+ gr88 gr89 gr90 gr91 gr92 gr93 gr94 gr95
+ gr96 gr97 gr98 gr99 gr100 gr101 gr102 gr103
+ gr104 gr105 gr106 gr107 gr108 gr109 gr110 gr111
+ gr112 gr113 gr114 gr115 gr116 gr117 gr118 gr119
+ gr120 tav tpc lrp slp msp rab rfb
+ lr125 lr126 lr127 raddr fp lr2 lr3 lr4
+ lr5 lr6 lr7 lr8 lr9 lr10 lr11 lr12
+ lr13 lr14 lr15 lr16 lr17 lr18 lr19 lr20
+ lr21 lr22 lr23 lr24 lr25 lr26 lr27 lr28
+ lr29 lr30 lr31 lr32 lr33 lr34 lr35 lr36
+ lr37 lr38 lr39 lr40 lr41 lr42 lr43 lr44
+ lr45 lr46 lr47 lr48 lr49 lr50 lr51 lr52
+ lr53 lr54 lr55 lr56 lr57 lr58 lr59 lr60
+ lr61 lr62 lr63 lr64 lr65 lr66 lr67 lr68
+ lr69 lr70 lr71 lr72 lr73 lr74 lr75 lr76
+ lr77 lr78 lr79 lr80 lr81 lr82 lr83 lr84
+ lr85 lr86 lr87 lr88 lr89 lr90 lr91 lr92
+ lr93 lr94 lr95 lr96 lr97 lr98 lr99 lr100
+ lr101 lr102 lr103 lr104 lr105 lr106 lr107 lr108
+ lr109 lr110 lr111 lr112 lr113 lr114 lr115 lr116
+ lr117 lr118 lr119 lr120 lr121 lr122 lr123 lr124
+];
+
+#TODO  offset start?
+# * protected special purpose registers  0-14
+# Vector Area Base Address
+define register offset=0x1000 size=4 [ VTB ];
+
+# Old Processor Status
+define register offset=0x1004 size=4 [ OPS ];
+
+# Current Processor Status
+define register offset=0x1008 size=4 [ CPS ];
+
+# Configuration
+define register offset=0x100c size=4 [ CFG ];
+
+# Channel Address
+define register offset=0x1010 size=4 [ CHA ];
+
+# Channel Data
+define register offset=0x1014 size=4 [ CHD ];
+
+# Channel Control
+define register offset=0x1018 size=4 [ CHC ];
+
+# Register Bank Protect
+define register offset=0x101c size=4 [ RBP ];
+
+# Timer Counter
+define register offset=0x1020 size=4 [ TMC ];
+
+# Timer Reload
+define register offset=0x1024 size=4 [ TMR ];
+
+# Program Counter 0 - decoded instruction
+define register offset=0x1028 size=4 [ PC0 ];
+
+# Program Counter 1 - executed instruction
+define register offset=0x102c size=4 [ PC1 ];
+
+# Program Counter 2 - previous instruction
+define register offset=0x1030 size=4 [ PC2 ];
+
+# MMU Configuration
+define register offset=0x1034 size=4 [ MMUC ];
+
+# lrU Recommendation
+define register offset=0x1038 size=4 [ LRU ];
+
+#TODO  offset gap?
+# * unprotected special purpose registers 128-135
+# Indirect Pointer C
+define register offset=0x103c size=4 [ IPC ];
+
+# Indirect Pointer A
+define register offset=0x1040 size=4 [ IPA ];
+
+# Indirect Pointer B
+define register offset=0x1044 size=4 [ IPB ];
+
+# Q
+define register offset=0x1048 size=4 [ Q ];
+
+# ALU
+define register offset=0x104c size=4 [ SR ];
+
+# Byte Pointer
+define register offset=0x1050 size=4 [ BPR ];
+
+# Funnel Shift Count
+define register offset=0x1054 size=4 [ FCR ];
+
+# Load/Store Count Remaining
+define register offset=0x1058 size=4 [ MC ];
+
+# * unprotected special purpose registers 160-162
+# Floating-Point Environment
+define register offset=0x105c size=4 [ FPE ];
+
+# Integer Environment
+define register offset=0x1060 size=4 [ INTE ];
+
+# Floating-Point Status
+define register offset=0x1064 size=4 [ FPS ];
+
+#TODO  offset gap?
+# * unprotected special purpose registers 164
+# Exception Opcode
+define register offset=0x1068 size=4 [ EXOP ];
+
+
+#TODO what are these, get rid of them
+define register offset=0x9000 size=1 [ DFf Vf Nf Zf Cf ];
+
+
+
+define register offset=0x3000 size=4 [
+ tlb000 tlb001 tlb002 tlb003 tlb004 tlb005 tlb006 tlb007
+ tlb008 tlb009 tlb010 tlb011 tlb012 tlb013 tlb014 tlb015
+ tlb016 tlb017 tlb018 tlb019 tlb020 tlb021 tlb022 tlb023
+ tlb024 tlb025 tlb026 tlb027 tlb028 tlb029 tlb030 tlb031
+ tlb032 tlb033 tlb034 tlb035 tlb036 tlb037 tlb038 tlb039
+ tlb040 tlb041 tlb042 tlb043 tlb044 tlb045 tlb046 tlb047
+ tlb048 tlb049 tlb050 tlb051 tlb052 tlb053 tlb054 tlb055
+ tlb056 tlb057 tlb058 tlb059 tlb060 tlb061 tlb062 tlb063
+ tlb064 tlb065 tlb066 tlb067 tlb068 tlb069 tlb070 tlb071
+ tlb072 tlb073 tlb074 tlb075 tlb076 tlb077 tlb078 tlb079
+ tlb080 tlb081 tlb082 tlb083 tlb084 tlb085 tlb086 tlb087
+ tlb088 tlb089 tlb090 tlb091 tlb092 tlb093 tlb094 tlb095
+ tlb096 tlb097 tlb098 tlb099 tlb100 tlb101 tlb102 tlb103
+ tlb104 tlb105 tlb106 tlb107 tlb108 tlb109 tlb110 tlb111
+ tlb112 tlb113 tlb114 tlb115 tlb116 tlb117 tlb118 tlb119
+ tlb120 tlb121 tlb122 tlb123 tlb124 tlb125 tlb126 tlb127
+];
+
+
+
+define token instr (32)
+  OP32=(0,31)
+  OP=(24,31)
+  OPM=(24,24)
+  OPA=(24,24)
+  REGA=(8,15)
+  TWINA=(8,15)
+  arnA=(8,15)
+  REGB=(0,7)
+  TWINB=(0,7)
+  arnB=(0,7)
+  REGC=(16,23)
+  TWINC=(16,23)
+  arnC=(16,23)
+  imm8=(0,7)
+  op_x0=(0,7)
+  op_x1=(16,23)
+  op_h0=(0,7)
+  op_h1=(16,23)
+  op_X0=(0,7)
+  op_X1=(16,23) signed
+  op_P0=(0,7)
+  op_P1=(16,23) signed
+  op_A0=(0,7)
+  op_A1=(16,23)
+  CE=(23,23)
+  CTRL=(16,22)
+  op_v=(16,23)
+  SA=(8,15)
+  UI=(7,7)
+  RND=(2,4)
+  FD=(2,3)
+  FMT=(2,3)
+  FS=(0,1)
+  ID=(16,17)
+  FUNC=(18,21)
+  ACN=(16,17)
+  op88=(8,8)
+  op1616=(16,16)
+  OPcc=(28,31)
+  cc=(1,3)
+  cc1=(5,5)
+;
+
+
+# register number 0 to 255
+# global register number 0 to 127
+# local register number 0 to 127
+# absolute register number 0 to 255
+
+
+attach variables [ REGA REGB REGC ] [
+ gr0 rsp gr2 gr3  _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ gr64 gr65 gr66 gr67 gr68 gr69 gr70 gr71 gr72 gr73 gr74 gr75 gr76 gr77 gr78 gr79
+ gr80 gr81 gr82 gr83 gr84 gr85 gr86 gr87 gr88 gr89 gr90 gr91 gr92 gr93 gr94 gr95
+ gr96 gr97 gr98 gr99 gr100 gr101 gr102 gr103 gr104 gr105 gr106 gr107 gr108 gr109 gr110 gr111
+ gr112 gr113 gr114 gr115 gr116 gr117 gr118 gr119 gr120 tav tpc lrp slp msp rab rfb
+ lr125 lr126 lr127 raddr fp lr2 lr3 lr4 lr5 lr6 lr7 lr8 lr9 lr10 lr11 lr12
+ lr13 lr14 lr15 lr16 lr17 lr18 lr19 lr20 lr21 lr22 lr23 lr24 lr25 lr26 lr27 lr28
+ lr29 lr30 lr31 lr32 lr33 lr34 lr35 lr36 lr37 lr38 lr39 lr40 lr41 lr42 lr43 lr44
+ lr45 lr46 lr47 lr48 lr49 lr50 lr51 lr52 lr53 lr54 lr55 lr56 lr57 lr58 lr59 lr60
+ lr61 lr62 lr63 lr64 lr65 lr66 lr67 lr68 lr69 lr70 lr71 lr72 lr73 lr74 lr75 lr76
+ lr77 lr78 lr79 lr80 lr81 lr82 lr83 lr84 lr85 lr86 lr87 lr88 lr89 lr90 lr91 lr92
+ lr93 lr94 lr95 lr96 lr97 lr98 lr99 lr100 lr101 lr102 lr103 lr104 lr105 lr106 lr107 lr108
+ lr109 lr110 lr111 lr112 lr113 lr114 lr115 lr116 lr117 lr118 lr119 lr120 lr121 lr122 lr123 lr124
+];
+
+attach variables [ TWINA TWINB TWINC ] [
+ rsp gr2 gr3 _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ gr64 gr65 gr66 gr67 gr68 gr69 gr70 gr71 gr72 gr73 gr74 gr75 gr76 gr77 gr78 gr79
+ gr80 gr81 gr82 gr83 gr84 gr85 gr86 gr87 gr88 gr89 gr90 gr91 gr92 gr93 gr94 gr95
+ gr96 gr97 gr98 gr99 gr100 gr101 gr102 gr103 gr104 gr105 gr106 gr107 gr108 gr109 gr110 gr111
+ gr112 gr113 gr114 gr115 gr116 gr117 gr118 gr119 gr120 tav tpc lrp slp msp rab rfb
+ lr125 lr126 lr127 raddr fp lr2 lr3 lr4 lr5 lr6 lr7 lr8 lr9 lr10 lr11 lr12
+ lr13 lr14 lr15 lr16 lr17 lr18 lr19 lr20 lr21 lr22 lr23 lr24 lr25 lr26 lr27 lr28
+ lr29 lr30 lr31 lr32 lr33 lr34 lr35 lr36 lr37 lr38 lr39 lr40 lr41 lr42 lr43 lr44
+ lr45 lr46 lr47 lr48 lr49 lr50 lr51 lr52 lr53 lr54 lr55 lr56 lr57 lr58 lr59 lr60
+ lr61 lr62 lr63 lr64 lr65 lr66 lr67 lr68 lr69 lr70 lr71 lr72 lr73 lr74 lr75 lr76
+ lr77 lr78 lr79 lr80 lr81 lr82 lr83 lr84 lr85 lr86 lr87 lr88 lr89 lr90 lr91 lr92
+ lr93 lr94 lr95 lr96 lr97 lr98 lr99 lr100 lr101 lr102 lr103 lr104 lr105 lr106 lr107 lr108
+ lr109 lr110 lr111 lr112 lr113 lr114 lr115 lr116 lr117 lr118 lr119 lr120 lr121 lr122 lr123 lr124 _
+];
+
+
+attach variables [ SA ] [
+ VTB OPS CPS CFG CHA CHD CHC RBP TMC TMR PC0 PC1 PC2 MMUC LRU _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ IPC IPA IPB Q SR BPR FCR MC _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ FPE INTE FPS _ EXOP _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+];
+
+define pcodeop trap;
+define pcodeop halt;
+define pcodeop clz;
+define pcodeop invalidate;
+define pcodeop interrupt_return;
+define pcodeop coprocessor_load;
+define pcodeop coprocessor_store;
+define pcodeop LOCK;
+define pcodeop UNLOCK;
+
+
+# ,        Itself.  The character appears in the assembly code.
+# a        REGA.  The register number is in bits 8-15 of the instruction.
+# b        REGB.  The register number is in bits 0-7 of the instruction.
+# c        REGC.  The register number is in bits 16-23 of the instruction.
+# i        An immediate operand is in bits 0-7 of the instruction.
+# x        Bits 0-7 and 16-23 of the instruction are bits 0-7 and 8-15
+#          (respectively) of the immediate operand.
+# h        Same as x but the instruction contains bits 16-31 of the
+#          immediate operand.
+# X        Same as x but bits 16-31 of the signed immediate operand
+#          are set to 1 (thus the operand is always negative).
+# P,A      Bits 0-7 and 16-23 of the instruction are bits 2-9 and 10-17
+#          (respectively) of the immediate operand.
+# 	      P=PC-relative, sign-extended to 32 bits.
+# 	      A=Absolute, zero-extended to 32 bits.
+# e        CE bit (bit 23) for a load/store instruction.
+# n        Control field (bits 16-22) for a load/store instruction.
+# v        Immediate operand in bits 16-23 of the instruction.
+#          (used for trap numbers).
+# s        SA.  Special-purpose register number in bits 8-15
+#          of the instruction.
+# u        UI--bit 7 of the instruction.
+# r        RND--bits 4-6 of the instruction.
+# d        FD--bits 2-3 of the instruction.
+# f        FS--bits 0-1 of the instruction.
+# I	      ID--bits 16-17 of the instruction.
+
+# Extensions for 29050:
+
+# d	      FMT--bits 2-3 of the instruction (not really new).
+# f	      ACN--bits 0-1 of the instruction (not really new).
+# F	      FUNC--Special function in bits 18-21 of the instruction.
+# C	      ACN--bits 16-17 specifying the accumlator register.  */
+
+
+##############################
+# 
+# Tables
+#
+##############################
+
+CONST16X: imm is op_x0 & op_x1 [ imm = (op_x1 << 8) | op_x0; ] { local tmp:2 = imm; export tmp; }
+
+CONST16NX: imm is op_X0 & op_X1 [ imm = (op_X1 << 8) | op_X0; ] { local tmp:4 = imm; export tmp; }
+
+CONST16H: imm is op_h0 & op_h1 [ imm = (op_h1 << 8) | op_h0; ] { local tmp:2 = imm; export tmp; }
+
+REL: addr is op_P0 & op_P1 [ addr = inst_start + ((op_P1 << 10) | (op_P0 << 2)); ] { local tmp:4 = addr; export *:4 tmp; }
+
+ABS: addr is op_A0 & op_A1 [ addr = (op_A1 << 10) | (op_A0 << 2); ] { local tmp:4 = addr; export *:4 tmp; }
+
+TARGET: REL is REL & OPA=0 { export REL; }
+TARGET: ABS is ABS & OPA=1 { export ABS; }
+
+IMM8: imm8 is imm8 { local tmp:4 = imm8; export tmp; }
+
+# TODO  Vector Number Assignments has the traps
+#       attach names? whats their name format
+TRAP: op_v is op_v { local tmp:4 = op_v; export tmp; }
+
+FC: is epsilon { local tmp:4 = zext(FCR[0,5]); export tmp; }
+
+BP: is epsilon { local tmp:4 = zext(BPR[0,2]); export tmp; }
+
+SRCB: IMM8 is IMM8 & OPM=1 { export IMM8; }
+SRCB: REGB is REGB & OPM=0 { export REGB; }
+
+CC: "eq"  is REGA & SRCB & cc=0 & cc1=1 { local tmp:4 = zext(REGA ==  SRCB); export tmp; }
+CC: "lt"  is REGA & SRCB & cc=0 & cc1=0 { local tmp:4 = zext(REGA s<  SRCB); export tmp; }
+CC: "neq" is REGA & SRCB & cc=1 & cc1=1 { local tmp:4 = zext(REGA !=  SRCB); export tmp; }
+CC: "ltu" is REGA & SRCB & cc=1 & cc1=0 { local tmp:4 = zext(REGA <   SRCB); export tmp; }
+CC: "le"  is REGA & SRCB & cc=2         { local tmp:4 = zext(REGA s<= SRCB); export tmp; }
+CC: "leu" is REGA & SRCB & cc=3         { local tmp:4 = zext(REGA <=  SRCB); export tmp; }
+CC: "gt"  is REGA & SRCB & cc=4         { local tmp:4 = zext(REGA s>  SRCB); export tmp; }
+CC: "gtu" is REGA & SRCB & cc=5         { local tmp:4 = zext(REGA >   SRCB); export tmp; }
+CC: "ge"  is REGA & SRCB & cc=6         { local tmp:4 = zext(REGA s>= SRCB); export tmp; }
+CC: "geu" is REGA & SRCB & cc=7         { local tmp:4 = zext(REGA >=  SRCB); export tmp; }
+
+CR: is epsilon { local tmp:4 = CHC; export tmp;}
+
+LOAD: is CE=0 & SRCB { local tmp:4 = *[ram]:4 SRCB; export tmp; }
+LOAD: is CE=1 & SRCB { local tmp:4 = coprocessor_load(SRCB); export tmp; }
+
+
+##############################
+# 
+# Macros
+#
+##############################
+
+#TODO  probably do signed and unsigned macros?
+
+macro resultflags(result) {
+    Nf = (result s< 0);
+    Zf = (result == 0);
+}
+
+macro addflags(result, oper1, oper2, dotrap) {
+    Cf = carry(oper1, oper2);
+    Vf = scarry(oper1, oper2);
+    resultflags(result);
+    # if ((dotrap == 0:1) || (Cf == 0:1)) goto inst_next;
+    # trap(2:4);
+}
+
+macro subflags(result, oper1, oper2, dotrap) {
+    Cf = oper2 <= oper1;
+    Vf = sborrow(oper1, oper2);
+    resultflags(result);
+    # if ((dotrap == 0:1) || (Cf == 0:1)) goto inst_next;
+    # trap(2:4);
+}
+
+
+##############################
+# 
+# Instructions
+#
+##############################
+
+#{ "add", 0x14000000, "c,a,b" },
+#{ "add", 0x15000000, "c,a,i" },
+:add REGC,REGA,SRCB is (OP=0x14|OP=0x15) & REGC & REGA & SRCB
+{
+	local tmpA:4 = REGA;
+	local tmpB:4 = SRCB;
+	REGC = tmpA + tmpB;
+	addflags(REGC, tmpA, tmpB, 0);
+}
+
+#{ "addc", 0x1c000000, "c,a,b" },
+#{ "addc", 0x1d000000, "c,a,i" },
+:addc REGC,REGA,SRCB is (OP=0x1c|OP=0x1d) & REGC & REGA & SRCB
+{
+	local tmpA:4 = REGA;
+	local tmpB:4 = SRCB;
+	REGC = tmpA + tmpB + zext(Cf);
+	addflags(REGC, tmpA, tmpB, 0);
+}
+
+#{ "addcs", 0x18000000, "c,a,b" },
+#{ "addcs", 0x19000000, "c,a,i" },
+:addcs REGC,REGA,SRCB is (OP=0x18|OP=0x19) & REGC & REGA & SRCB
+{
+	local tmpA:4 = REGA;
+	local tmpB:4 = SRCB;
+	REGC = tmpA + tmpB + zext(Cf);
+	addflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "addcu", 0x1a000000, "c,a,b" },
+#{ "addcu", 0x1b000000, "c,a,i" },
+:addcu REGC,REGA,SRCB is (OP=0x1a|OP=0x1b) & REGC & REGA & SRCB
+{
+	local tmpA:4 = REGA;
+	local tmpB:4 = SRCB;
+	REGC = tmpA + tmpB + zext(Cf);
+	addflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "adds", 0x10000000, "c,a,b" },
+#{ "adds", 0x11000000, "c,a,i" },
+:adds REGC,REGA,SRCB is (OP=0x10|OP=0x11) & REGC & REGA & SRCB
+{
+	local tmpA:4 = REGA;
+	local tmpB:4 = SRCB;
+	REGC = tmpA + tmpB;
+	addflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "addu", 0x12000000, "c,a,b" },
+#{ "addu", 0x13000000, "c,a,i" },
+:addu REGC,REGA,SRCB is (OP=0x12|OP=0x13) & REGC & REGA & SRCB
+{
+	local tmpA:4 = REGA;
+	local tmpB:4 = SRCB;
+	REGC = tmpA + tmpB;
+	addflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "and", 0x90000000, "c,a,b" },
+#{ "and", 0x91000000, "c,a,i" },
+:and REGC,REGA,SRCB is (OP=0x90|OP=0x91) & REGC & REGA & SRCB
+{
+	REGC = REGA & SRCB;
+	resultflags(REGC);
+}
+
+#{ "andn", 0x9c000000, "c,a,b" },
+#{ "andn", 0x9d000000, "c,a,i" },
+:andn REGC,REGA,SRCB is (OP=0x9c|OP=0x9d) & REGC & REGA & SRCB
+{
+	REGC = REGA & ~SRCB;
+	resultflags(REGC);
+}
+
+#{ "aseq", 0x70000000, "v,a,b" },
+#{ "aseq", 0x71000000, "v,a,i" },
+#{ "asge", 0x5c000000, "v,a,b" },
+#{ "asge", 0x5d000000, "v,a,i" },
+#{ "asgeu", 0x5e000000, "v,a,b" },
+#{ "asgeu", 0x5f000000, "v,a,i" },
+#{ "asgt", 0x58000000, "v,a,b" },
+#{ "asgt", 0x59000000, "v,a,i" },
+#{ "asgtu", 0x5a000000, "v,a,b" },
+#{ "asgtu", 0x5b000000, "v,a,i" },
+#{ "asle", 0x54000000, "v,a,b" },
+#{ "asle", 0x55000000, "v,a,i" },
+#{ "asleu", 0x56000000, "v,a,b" },
+#{ "asleu", 0x57000000, "v,a,i" },
+#{ "aslt", 0x50000000, "v,a,b" },
+#{ "aslt", 0x51000000, "v,a,i" },
+#{ "asltu", 0x52000000, "v,a,b" },
+#{ "asltu", 0x53000000, "v,a,i" },
+#{ "asneq", 0x72000000, "v,a,b" },
+#{ "asneq", 0x73000000, "v,a,i" },
+:as^CC TRAP,REGA,SRCB is (OPcc=0x5|OPcc=0x7) & TRAP & CC & REGA & SRCB
+{
+	if (CC != 0) goto inst_next;
+	trap(TRAP);
+}
+
+#{ "call", 0xa8000000, "a,P" },
+#{ "call", 0xa9000000, "a,A" },
+:call REGA,TARGET is (OP=0xa8|OP=0xa9) & REGA & TARGET
+{
+	delayslot(1);
+	REGA = inst_next;
+	call TARGET;
+}
+
+#{ "calli", 0xc8000000, "a,b" },
+:calli REGA,REGB is OP=0xc8 & REGA & REGB
+{
+	local ea:4 = REGB;
+	delayslot(1);
+	REGA = inst_next;
+	call [ea];
+}
+
+@if defined(WHATISTHIS)
+#{ "class", 0xe6000000, "c,a,f" },
+:class REGC,REGA,FS is OP=0xe6 & REGC & REGA & FS
+{
+	# TODO
+}
+@endif
+
+#{ "clz", 0x08000000, "c,b" },
+#{ "clz", 0x09000000, "c,i" },
+:clz REGC,SRCB is (OP=0x08|OP=0x09) & REGC & SRCB
+{
+	REGC = clz(SRCB);
+}
+
+#{ "const", 0x03000000, "a,x" },
+:const REGA,CONST16X is OP=0x03 & REGA & CONST16X
+{
+	REGA[0,16] = CONST16X;
+}
+
+#{ "consth", 0x02000000, "a,h" },
+:consth REGA,CONST16H is OP=0x02 & REGA & CONST16H
+{
+	REGA[16,16] = CONST16H;
+}
+
+#{ "consthz", 0x05000000, "a,h" },
+:consthz REGA,CONST16H is OP=0x05 & REGA & CONST16H
+{
+	REGA[0,16] = 0;
+	REGA[16,16] = CONST16H;
+}
+
+#{ "constn", 0x01000000, "a,X" },
+:constn REGA,CONST16NX is OP=0x01 & REGA & CONST16NX
+{
+	REGA = CONST16NX;
+}
+
+@if defined(WHATISTHIS)
+#{ "convert", 0xe4000000, "c,a,u,r,d,f" },
+:convert REGC,REGA,UI,RND,FMT,FS is OP=0xe4 & REGC & REGA & UI & RND & FMT & FS
+{
+	# TODO
+}
+@endif
+
+#{ "cpbyte", 0x2e000000, "c,a,b" },
+#{ "cpbyte", 0x2f000000, "c,a,i" },
+:cpbyte REGC,REGA,SRCB is (OP=0x2e|OP=0x2f) & REGC & REGA & SRCB
+{
+	local tmp:4 = SRCB;
+	local tmp0:1 = REGA[0,8] == tmp[0,8];
+	local tmp1:1 = REGA[8,8] == tmp[8,8];
+	local tmp2:1 = REGA[16,8] == tmp[16,8];
+	local tmp3:1 = REGA[24,8] == tmp[24,8];
+	REGC = zext(tmp0|tmp1|tmp2|tmp3);
+}
+
+#{ "cpeq", 0x60000000, "c,a,b" },
+#{ "cpeq", 0x61000000, "c,a,i" },
+#{ "cpge", 0x4c000000, "c,a,b" },
+#{ "cpge", 0x4d000000, "c,a,i" },
+#{ "cpgeu", 0x4e000000, "c,a,b" },
+#{ "cpgeu", 0x4f000000, "c,a,i" },
+#{ "cpgt", 0x48000000, "c,a,b" },
+#{ "cpgt", 0x49000000, "c,a,i" },
+#{ "cpgtu", 0x4a000000, "c,a,b" },
+#{ "cpgtu", 0x4b000000, "c,a,i" },
+#{ "cple", 0x44000000, "c,a,b" },
+#{ "cple", 0x45000000, "c,a,i" },
+#{ "cpleu", 0x46000000, "c,a,b" },
+#{ "cpleu", 0x47000000, "c,a,i" },
+#{ "cplt", 0x40000000, "c,a,b" },
+#{ "cplt", 0x41000000, "c,a,i" },
+#{ "cpltu", 0x42000000, "c,a,b" },
+#{ "cpltu", 0x43000000, "c,a,i" },
+#{ "cpneq", 0x62000000, "c,a,b" },
+#{ "cpneq", 0x63000000, "c,a,i" },
+:cp^CC REGC,REGA,SRCB is (OPcc=0x6|OPcc=0x4) & REGC & CC & REGA & SRCB
+{
+	REGC = CC;
+}
+
+:cvdf REGC,REGA is OP=0xe9 & REGC & REGA & TWINA
+{
+	local tmp:8 = (zext(REGA) << 32) | zext(TWINA);
+	REGC = float2float(tmp);
+}
+
+:cvdint REGC,REGA is OP=0xe7 & REGC & REGA & TWINA
+{
+	local tmp:8 = (zext(REGA) << 32) | zext(TWINA);
+	REGC = trunc(tmp);
+}
+
+:cvfd REGC,REGA is OP=0xe8 & REGC & REGA & TWINC
+{
+	local tmp:8 = float2float(REGA);
+	REGC = tmp[32,32];
+	TWINC = tmp[0,32];
+}
+
+:cvfint REGC,REGA is OP=0xe6 & REGC & REGA
+{
+	REGC = trunc(REGA);
+}
+
+:cvintd REGC,REGA is OP=0xe5 & REGC & REGA & TWINC
+{
+	local tmp:8 = int2float(REGA);
+	REGC = tmp[32,32];
+	TWINC = tmp[0,32];
+}
+
+:cvintf REGC,REGA is OP=0xe4 & REGC & REGA
+{
+	REGC = int2float(REGA);
+}
+
+#{ "dadd", 0xf1000000, "c,a,b" },
+:dadd REGC,REGA,REGB is OP=0xf1 & REGC & REGA & REGB & TWINC & TWINA & TWINB
+{
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	local tmpC:8 = tmpA f+ tmpB;
+	REGC = tmpC[32,32];
+	TWINC = tmpC[0,32];
+}
+
+#{ "ddiv", 0xf7000000, "c,a,b" },
+:ddiv REGC,REGA,REGB is OP=0xf7 & REGC & REGA & REGB & TWINC & TWINA & TWINB
+{
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	local tmpC:8 = tmpA f/ tmpB;
+	REGC = tmpC[32,32];
+	TWINC = tmpC[0,32];
+}
+
+#{ "deq", 0xeb000000, "c,a,b" },
+:deq REGC,REGA,REGB is OP=0xeb & REGC & REGA & REGB & TWINA & TWINB
+{
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	REGC = zext(tmpA f== tmpB);
+}
+
+@if defined(WHATISTHIS)
+#{ "dge", 0xef000000, "c,a,b" },
+:dge REGC,REGA,REGB is OP=0xef & REGC & REGA & REGB & TWINA & TWINB
+{
+	# TODO
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	REGC = zext(tmpA f>= tmpB);
+}
+@endif
+
+#{ "dgt", 0xed000000, "c,a,b" },
+:dgt REGC,REGA,REGB is OP=0xed & REGC & REGA & REGB & TWINA & TWINB
+{
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	REGC = zext(tmpA f> tmpB);
+}
+
+#{ "div", 0x6a000000, "c,a,b" },
+#{ "div", 0x6b000000, "c,a,i" },
+:div REGC,REGA,SRCB is (OP=0x6a|OP=0x6b) & REGC & REGA & SRCB
+{
+	# TODO
+}
+
+#{ "div0", 0x68000000, "c,b" },
+#{ "div0", 0x69000000, "c,i" },
+:div0 REGC,SRCB is (OP=0x68|OP=0x69) & REGC & SRCB
+{
+	# TODO
+}
+
+#{ "divide", 0xe1000000, "c,a,b" },
+:divide REGC,REGA,REGB is OP=0xe1 & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "dividu", 0xe3000000, "c,a,b" },
+:dividu REGC,REGA,REGB is OP=0xe3 & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "divl", 0x6c000000, "c,a,b" },
+#{ "divl", 0x6d000000, "c,a,i" },
+:divl REGC,REGA,SRCB is (OP=0x6c|OP=0x6d) & REGC & REGA & SRCB
+{
+	# TODO
+}
+
+#{ "divrem", 0x6e000000, "c,a,b" },
+#{ "divrem", 0x6f000000, "c,a,i" },
+:divrem REGC,REGA,SRCB is (OP=0x6e|OP=0x6f) & REGC & REGA & SRCB
+{
+	# TODO
+}
+
+#TODO why isnt this in gcc?
+:dlt REGC,REGA,REGB is OP=0xef & REGC & REGA & REGB & TWINA & TWINB
+{
+	# TODO
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	REGC = zext(tmpA f< tmpB);
+}
+
+#{ "dmac", 0xd9000000, "F,c,a,b" },
+:dmac FUNC,REGC,REGA,REGB is OP=0xd9 & FUNC & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "dmsm", 0xdb000000, "c,a,b" },
+:dmsm REGC,REGA,REGB is OP=0xdb & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "dmul", 0xf5000000, "c,a,b" },
+:dmul REGC,REGA,REGB is OP=0xf5 & REGC & REGA & REGB & TWINC & TWINA & TWINB
+{
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	local tmpC:8 = tmpA f* tmpB;
+	REGC = tmpC[32,32];
+	TWINC = tmpC[0,32];
+}
+
+#{ "dsub", 0xf3000000, "c,a,b" },
+:dsub REGC,REGA,REGB is OP=0xf3 & REGC & REGA & REGB & TWINC & TWINA & TWINB
+{
+	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
+	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
+	local tmpC:8 = tmpA f- tmpB;
+	REGC = tmpC[32,32];
+	TWINC = tmpC[0,32];
+}
+
+#{ "emulate", 0xd7000000, "v,a,b" },
+:emulate TRAP,REGA,REGB is OP=0xd7 & TRAP & REGA & REGB & arnA & arnB
+{
+	IPA = arnA;
+	IPB = arnB;
+	trap(TRAP);
+}
+
+#{ "exbyte", 0x0a000000, "c,a,b" },
+#{ "exbyte", 0x0b000000, "c,a,i" },
+:exbyte REGC,REGA,SRCB is (OP=0x0a|OP=0x0b) & REGC & REGA & SRCB
+{
+	local tmp:4 = SRCB;
+	tmp[0,8] = REGA[0,8];
+	REGC = tmp;
+}
+
+#{ "exhw", 0x7c000000, "c,a,b" },
+#{ "exhw", 0x7d000000, "c,a,i" },
+:exhw REGC,REGA,SRCB is (OP=0x7c|OP=0x7d) & REGC & REGA & SRCB
+{
+	local tmp:4 = SRCB;
+	tmp[0,16] = REGA[0,16];
+	REGC = tmp;	
+}
+
+#{ "exhws", 0x7e000000, "c,a" },
+:exhws REGC,REGA is OP=0x7e & REGC & REGA
+{
+	REGC = sext(REGA[0,16]);	
+}
+
+#{ "extract", 0x7a000000, "c,a,b" },
+#{ "extract", 0x7b000000, "c,a,i" },
+:extract REGC,REGA,SRCB is (OP=0x7a|OP=0x7b) & REGC & REGA & SRCB & FC
+{
+	local tmp:8 = ((zext(REGA) << 32) | zext(SRCB)) << FC;
+	REGC = tmp[32,32];
+}
+
+#{ "fadd", 0xf0000000, "c,a,b" },
+:fadd REGC,REGA,REGB is OP=0xf0 & REGC & REGA & REGB
+{
+	REGC = REGA f+ REGB;
+}
+
+#{ "fdiv", 0xf6000000, "c,a,b" },
+:fdiv REGC,REGA,REGB is OP=0xf6 & REGC & REGA & REGB
+{
+	REGC = REGA f/ REGB;
+}
+
+#{ "fdmul", 0xf9000000, "c,a,b" },
+:fdmul REGC,REGA,REGB is OP=0xf9 & REGC & REGA & REGB & TWINC
+{
+	local tmpA:8 = float2float(REGA);
+	local tmpB:8 = float2float(REGB);
+	local tmpC:8 = tmpA f* tmpB;
+	REGC = tmpC[32,32];
+	TWINC = tmpC[0,32];
+}
+
+#{ "feq", 0xea000000, "c,a,b" },
+:feq REGC,REGA,REGB is OP=0xea & REGC & REGA & REGB
+{
+	REGC = zext(REGA f== REGB);
+}
+
+#{ "fge", 0xee000000, "c,a,b" },
+:fge REGC,REGA,REGB is OP=0xee & REGC & REGA & REGB
+{
+	REGC = zext(REGA f>= REGB);
+}
+
+#{ "fgt", 0xec000000, "c,a,b" },
+:fgt REGC,REGA,REGB is OP=0xec & REGC & REGA & REGB
+{
+	REGC = zext(REGA f> REGB);
+}
+
+#{ "fmac", 0xd8000000, "F,REGC,REGA,REGB" },
+:fmac FUNC,REGC,REGA,REGB is OP=0xd8 & FUNC & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "fmsm", 0xda000000, "c,a,b" },
+:fmsm REGC,REGA,REGB is OP=0xda & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "fmul", 0xf4000000, "c,a,b" },
+:fmul REGC,REGA,REGB is OP=0xf4 & REGC & REGA & REGB
+{
+	REGC = REGA f* REGB;
+}
+
+#{ "fsub", 0xf2000000, "c,a,b" },
+:fsub REGC,REGA,REGB is OP=0xf2 & REGC & REGA & REGB
+{
+	REGC = REGA f- REGB;
+}
+
+#{ "halt", 0x89000000, "" },
+:halt  is OP=0x89
+{
+	local tmp:4 = halt();
+	call [tmp];
+}
+
+#{ "inbyte", 0x0c000000, "c,a,b" },
+#{ "inbyte", 0x0d000000, "c,a,i" },
+:inbyte REGC,REGA,SRCB is (OP=0x0c|OP=0x0d) & REGC & REGA & SRCB & BP
+{
+	local tmp:4 = ~(0xff << (BP * 8));
+	tmp = tmp & REGA;
+	REGC = tmp | (SRCB << (BP * 8));
+}
+
+#{ "inhw", 0x78000000, "c,a,b" },
+#{ "inhw", 0x79000000, "c,a,i" },
+:inhw REGC,REGA,SRCB is (OP=0x78|OP=0x79) & REGC & REGA & SRCB & BP
+{
+	local tmp:4 = ~(0xffff << (BP * 16));
+	tmp = tmp & REGA;
+	REGC = tmp | (SRCB << (BP * 16));
+}
+
+#{ "inv", 0x9f000000, "I" },
+:inv ID is OP=0x9f & ID
+{
+	local tmp:4 = ID;
+	invalidate(tmp);
+}
+
+#{ "iret", 0x88000000, "" },
+:iret  is OP=0x88
+{
+	interrupt_return();
+}
+
+#{ "iretinv", 0x8c000000, "I" },
+:iretinv ID is OP=0x8c & ID
+{
+	local tmp:4 = ID;
+	invalidate(tmp);
+	interrupt_return();
+}
+
+#{ "jmp", 0xa0000000, "P" },
+#{ "jmp", 0xa1000000, "A" },
+:jmp TARGET is (OP=0xa0|OP=0xa1) & TARGET
+{
+	delayslot(1);
+	goto TARGET;
+}
+
+#{ "jmpf", 0xa4000000, "a,P" },
+#{ "jmpf", 0xa5000000, "a,A" },
+:jmpf REGA,TARGET is (OP=0xa4|OP=0xa5) & REGA & TARGET
+{
+	delayslot(1);
+	if (REGA == 0) goto TARGET;
+}
+
+#{ "jmpfdec", 0xb4000000, "a,P" },
+#{ "jmpfdec", 0xb5000000, "a,A" },
+:jmpfdec REGA,TARGET is (OP=0xb4|OP=0xb5) & REGA & TARGET
+{
+	local tmp:4 = REGA;
+	REGA = (REGA - 1) & 1; # Boolean?
+	delayslot(1); # order of delayslot?
+	if (tmp == 0) goto TARGET;
+}
+
+#{ "jmpfi", 0xc4000000, "a,b" },
+:jmpfi REGA,REGB is OP=0xc4 & REGA & REGB
+{
+	delayslot(1);
+	if (REGA == 0) goto REGB; 
+}
+
+#{ "jmpi", 0xc0000000, "b" },
+:jmpi REGB is OP=0xc0 & REGB
+{
+	delayslot(1);
+	goto REGB;
+}
+
+#{ "jmpt", 0xac000000, "a,P" },
+#{ "jmpt", 0xad000000, "a,A" },
+:jmpt REGA,TARGET is (OP=0xac|OP=0xad) & REGA & TARGET
+{
+	delayslot(1);
+	if (REGA != 0) goto TARGET;
+}
+
+#{ "jmpti", 0xcc000000, "a,b" },
+:jmpti REGA,REGB is OP=0xcc & REGA & REGB
+{
+	delayslot(1);
+	if (REGA != 0) goto REGB; 
+}
+
+#{ "load", 0x16000000, "e,n,a,b" },
+#{ "load", 0x17000000, "e,n,a,i" },
+:load CE,CTRL,REGA,SRCB is (OP=0x16|OP=0x17) & CE & CTRL & REGA & SRCB & LOAD
+{
+	REGA = LOAD;
+}
+
+#{ "loadl", 0x06000000, "e,n,a,b" },
+#{ "loadl", 0x07000000, "e,n,a,i" },
+:loadl CE,CTRL,REGA,SRCB is (OP=0x06|OP=0x07) & CE & CTRL & REGA & SRCB & LOAD
+{
+	LOCK();
+	REGA = LOAD;
+	UNLOCK();
+}
+
+#{ "loadm", 0x36000000, "e,n,a,b" },
+#{ "loadm", 0x37000000, "e,n,a,i" },
+:loadm CE,CTRL,REGA,SRCB is (OP=0x36|OP=0x37) & CE & CTRL & REGA & SRCB & CR
+{
+	local count:4 = 0;
+	local dest:4 = &REGA;
+	local src:4 = SRCB;
+	<start_load>
+	if (count == CR) goto inst_next;
+	*[register]:4 (dest + (count * 4)) = *[ram]:4 (src + (count * 4));
+	count = count + 1;
+	goto <start_load>;
+}
+@if defined(WTF_CE)
+:loadm CE,CTRL,REGA,SRCB is (OP=0x36|OP=0x37) & CE & CTRL & REGA & SRCB & CR
+{
+	local count:4 = 0;
+	local dest:4 = &REGA;
+	local src:4 = SRCB;
+	<start_load>
+	if (count == CR) goto inst_next;
+	*[register]:4 (dest + (count * 4)) = coprocessor_load(src + (count * 4));
+	count = count + 1;
+	goto <start_load>;
+}
+@endif
+
+#{ "loadset", 0x26000000, "e,n,a,b" },
+#{ "loadset", 0x27000000, "e,n,a,i" },
+:loadset CE,CTRL,REGA,SRCB is (OP=0x26|OP=0x27) & CE & CTRL & REGA & SRCB & CR
+{	
+	local count:4 = 0;
+	local dest:4 = REGA;
+	local src:4 = SRCB;
+	local tmp:4 = 0xffffffff;
+	LOCK();
+	<start_load>
+	if (count == CR) goto <end_load>;
+	*[ram]:4 (dest + (count * 4)) = *[ram]:4 (src + (count * 4));
+	*[ram]:4 (src + (count * 4)) = tmp;
+	count = count + 1;
+	goto <start_load>;
+	<end_load>
+	UNLOCK();
+}
+@if defined(WTF_CE)
+:loadset CE,CTRL,REGA,SRCB is (OP=0x26|OP=0x27) & CE & CTRL & REGA & SRCB & CR
+{	
+	local count:4 = 0;
+	local dest:4 = REGA;
+	local src:4 = SRCB;
+	local tmp:4 = 0xffffffff;
+	LOCK();
+	<start_load>
+	if (count == CR) goto <end_load>;
+	*[ram]:4 (dest + (count * 4)) = coprocessor_load(src + (count * 4));
+	coprocessor_store(src + (count * 4), tmp);
+	count = count + 1;
+	goto <start_load>;
+	<end_load>
+	UNLOCK();
+}
+@endif
+
+#{ "mfacc", 0xe9000100, "c,d,f" },
+:mfacc REGC,FMT,FS is OP=0xe9 & op88=1 & REGC & FMT & FS
+{
+	# TODO
+}
+
+#{ "mfsr", 0xc6000000, "c,s" },
+:mfsr REGC,SA is OP=0xc6 & REGC & SA
+{
+	REGC = SA;
+}
+
+#{ "mftlb", 0xb6000000, "c,a" },
+:mftlb REGC,REGA is OP=0xb6 & REGC & REGA
+{
+	# TODO
+	# DEST <- TLB[SRCA]
+}
+
+#{ "mtacc", 0xe8010000, "a,d,f" },
+:mtacc REGA,FMT,FS is OP=0xe8 & op1616=1 & REGA & FMT & FS
+{
+	# TODO
+}
+
+#{ "mtsr", 0xce000000, "s,b" },
+:mtsr SA,REGB is OP=0xce & SA & REGB
+{
+	SA = REGB;
+}
+
+#{ "mtsrim", 0x04000000, "s,x" },
+:mtsrim SA,CONST16X is OP=0x04 & SA & CONST16X
+{
+	SA = zext(CONST16X);
+}
+
+#{ "mttlb", 0xbe000000, "a,b" },
+:mttlb REGA,REGB is OP=0xbe & REGA & REGB
+{
+	# TODO
+	# TLB[SRCA] <- SRBB
+}
+
+#{ "mul", 0x64000000, "c,a,b" },
+#{ "mul", 0x65000000, "c,a,i" },
+:mul REGC,REGA,SRCB is (OP=0x64|OP=0x65) & REGC & REGA & SRCB
+{
+	# TODO
+}
+
+#{ "mull", 0x66000000, "c,a,b" },
+#{ "mull", 0x67000000, "c,a,i" },
+:mull REGC,REGA,SRCB is (OP=0x66|OP=0x67) & REGC & REGA & SRCB
+{
+	# TODO
+}
+
+#{ "multiplu", 0xe2000000, "c,a,b" },
+:multiplu REGC,REGA,REGB is OP=0xe2 & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "multiply", 0xe0000000, "c,a,b" },
+:multiply REGC,REGA,REGB is OP=0xe0 & REGC & REGA & REGB
+{
+	local tmp:8 = sext(REGA) * sext(REGB);
+	REGC = tmp[32,32];
+	Q = tmp[0,32];
+}
+
+#{ "multm", 0xde000000, "c,a,b" },
+:multm REGC,REGA,REGB is OP=0xde & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "multmu", 0xdf000000, "c,a,b" },
+:multmu REGC,REGA,REGB is OP=0xdf & REGC & REGA & REGB
+{
+	# TODO
+}
+
+#{ "mulu", 0x74000000, "c,a,b" },
+#{ "mulu", 0x75000000, "c,a,i" },
+:mulu REGC,REGA,SRCB is (OP=0x74|OP=0x75) & REGC & REGA & SRCB
+{
+	# TODO
+}
+
+#{ "nand", 0x9a000000, "c,a,b" },
+#{ "nand", 0x9b000000, "c,a,i" },
+:nand REGC,REGA,SRCB is (OP=0x9a|OP=0x9b) & REGC & REGA & SRCB
+{
+	REGC = ~(REGA & SRCB);
+	resultflags(REGC);
+}
+
+#{ "nop", 0x70400101, "" },
+:nop  is OP32=0x70400101
+{
+	local NOP:4 = 0;
+	NOP = NOP;
+}
+
+#{ "nor", 0x98000000, "c,a,b" },
+#{ "nor", 0x99000000, "c,a,i" },
+:nor REGC,REGA,SRCB is (OP=0x98|OP=0x99) & REGC & REGA & SRCB
+{
+	REGC = ~(REGA | SRCB);
+	resultflags(REGC);
+}
+
+#{ "or", 0x92000000, "c,a,b" },
+#{ "or", 0x93000000, "c,a,i" },
+:or REGC,REGA,SRCB is (OP=0x92|OP=0x93) & REGC & REGA & SRCB
+{
+	REGC = REGA | SRCB;
+	resultflags(REGC);
+}
+
+#{ "orn", 0xaa000000, "c,a,b" },
+#{ "orn", 0xab000000, "c,a,i" },
+:orn REGC,REGA,SRCB is (OP=0xaa|OP=0xab) & REGC & REGA & SRCB
+{
+	REGC = REGA | ~SRCB;
+	resultflags(REGC);
+}
+
+#{ "setip", 0x9e000000, "c,a,b" },
+:setip REGC,REGA,REGB is OP=0x9e & REGC & REGA & REGB & arnC & arnA & arnB
+{
+	IPA = arnA;
+	IPB = arnB;
+	IPC = arnC;
+}
+
+#{ "sll", 0x80000000, "c,a,b" },
+#{ "sll", 0x81000000, "c,a,i" },
+:sll REGC,REGA,SRCB is (OP=0x80|OP=0x81) & REGC & REGA & SRCB
+{
+	REGC = REGA << SRCB;
+}
+
+@if defined(WHATISTHIS)
+#{ "sqrt", 0xe5000000, "c,a,f" },
+:sqrt REGC,REGA,FS is OP=0xe5 & REGC & REGA & FS
+{
+	# TODO
+	REGC = sqrt(REGA);
+}
+@endif
+
+#{ "sra", 0x86000000, "c,a,b" },
+#{ "sra", 0x87000000, "c,a,i" },
+:sra REGC,REGA,SRCB is (OP=0x86|OP=0x87) & REGC & REGA & SRCB
+{
+	REGC = REGA s>> SRCB;
+}
+
+#{ "srl", 0x82000000, "c,a,b" },
+#{ "srl", 0x83000000, "c,a,i" },
+:srl REGC,REGA,SRCB is (OP=0x82|OP=0x83) & REGC & REGA & SRCB
+{
+	REGC = REGA >> SRCB;
+}
+
+#{ "store", 0x1e000000, "e,n,a,b" },
+#{ "store", 0x1f000000, "e,n,a,i" },
+:store CE,CTRL,REGA,SRCB is (OP=0x1e|OP=0x1f) & CE & CTRL & REGA & SRCB
+{
+	*[ram]:4 SRCB = REGA;
+}
+@if defined(WTF_CE)
+:store CE,CTRL,REGA,SRCB is (OP=0x1e|OP=0x1f) & CE & CTRL & REGA & SRCB
+{
+	coprocessor_store(SRCB, REGA);
+}
+@endif
+
+#{ "storel", 0x0e000000, "e,n,a,b" },
+#{ "storel", 0x0f000000, "e,n,a,i" },
+:storel CE,CTRL,REGA,SRCB is (OP=0x0e|OP=0x0f) & CE & CTRL & REGA & SRCB
+{
+	LOCK();
+	*[ram]:4 SRCB = REGA;
+	UNLOCK();
+}
+@if defined(WTF_CE)
+:storel CE,CTRL,REGA,SRCB is (OP=0x0e|OP=0x0f) & CE & CTRL & REGA & SRCB
+{
+	LOCK();
+	coprocessor_store(SRCB, REGA);
+	UNLOCK();
+}
+@endif
+
+#{ "storem", 0x3e000000, "e,n,a,b" },
+#{ "storem", 0x3f000000, "e,n,a,i" },
+:storem CE,CTRL,REGA,SRCB is (OP=0x3e|OP=0x3f) & CE & CTRL & REGA & SRCB & CR
+{
+	local count:4 = 0;
+	local dest:4 = &REGA;
+	local src:4 = SRCB;
+	<start_load>
+	if (count == CR) goto inst_next;
+	*[ram]:4 (src + (count * 4)) = *[register]:4 (dest + (count * 4));
+	count = count + 1;
+	goto <start_load>;
+}
+@if defined(WTF_CE)
+:storem CE,CTRL,REGA,SRCB is (OP=0x3e|OP=0x3f) & CE & CTRL & REGA & SRCB & CR
+{
+	local count:4 = 0;
+	local dest:4 = &REGA;
+	local src:4 = SRCB;
+	<start_load>
+	if (count == CR) goto inst_next;
+	coprocessor_store(*[ram]:4 (src + (count * 4)), *[register]:4 (dest + (count * 4)));
+	count = count + 1;
+	goto <start_load>;
+}
+@endif
+
+#{ "sub", 0x24000000, "c,a,b" },
+#{ "sub", 0x25000000, "c,a,i" },
+:sub REGC,REGA,SRCB is (OP=0x24|OP=0x25) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpA - tmpB;
+	subflags(REGC, tmpA, tmpB, 0);
+}
+
+#{ "subc", 0x2c000000, "c,a,b" },
+#{ "subc", 0x2d000000, "c,a,i" },
+:subc REGC,REGA,SRCB is (OP=0x2c|OP=0x2d) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = REGA - SRCB - 1 + zext(Cf);
+	subflags(REGC, tmpA, tmpB, 0);
+}
+
+#{ "subcs", 0x28000000, "c,a,b" },
+#{ "subcs", 0x29000000, "c,a,i" },
+:subcs REGC,REGA,SRCB is (OP=0x28|OP=0x29) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = REGA - SRCB - 1 + zext(Cf);
+	subflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "subcu", 0x2a000000, "c,a,b" },
+#{ "subcu", 0x2b000000, "c,a,i" },
+:subcu REGC,REGA,SRCB is (OP=0x2a|OP=0x2b) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = REGA - SRCB - 1 + zext(Cf);
+	subflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "subr", 0x34000000, "c,a,b" },
+#{ "subr", 0x35000000, "c,a,i" },
+:subr REGC,REGA,SRCB is (OP=0x34|OP=0x35) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpB - tmpA;
+	subflags(REGC, tmpB, tmpA, 0);
+}
+
+#{ "subrc", 0x3c000000, "c,a,b" },
+#{ "subrc", 0x3d000000, "c,a,i" },
+:subrc REGC,REGA,SRCB is (OP=0x3c|OP=0x3d) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpB - tmpA - 1 + zext(Cf);
+	subflags(REGC, tmpB, tmpA, 0);
+}
+
+#{ "subrcs", 0x38000000, "c,a,b" },
+#{ "subrcs", 0x39000000, "c,a,i" },
+:subrcs REGC,REGA,SRCB is (OP=0x38|OP=0x39) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpB - tmpA - 1 + zext(Cf);
+	subflags(REGC, tmpB, tmpA, 1);
+}
+
+#{ "subrcu", 0x3a000000, "c,a,b" },
+#{ "subrcu", 0x3b000000, "c,a,i" },
+:subrcu REGC,REGA,SRCB is (OP=0x3a|OP=0x3b) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpB - tmpA - 1 + zext(Cf);
+	subflags(REGC, tmpB, tmpA, 1);
+}
+
+#{ "subrs", 0x30000000, "c,a,b" },
+#{ "subrs", 0x31000000, "c,a,i" },
+:subrs REGC,REGA,SRCB is (OP=0x30|OP=0x31) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpB - tmpA;
+	subflags(REGC, tmpB, tmpA, 1);
+}
+
+#{ "subru", 0x32000000, "c,a,b" },
+#{ "subru", 0x33000000, "c,a,i" },
+:subru REGC,REGA,SRCB is (OP=0x32|OP=0x33) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpB - tmpA;
+	subflags(REGC, tmpB, tmpA, 1);
+}
+
+#{ "subs", 0x20000000, "c,a,b" },
+#{ "subs", 0x21000000, "c,a,i" },
+:subs REGC,REGA,SRCB is (OP=0x20|OP=0x21) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpA - tmpB;
+	subflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "subu", 0x22000000, "c,a,b" },
+#{ "subu", 0x23000000, "c,a,i" },
+:subu REGC,REGA,SRCB is (OP=0x22|OP=0x23) & REGC & REGA & SRCB
+{
+	local tmpA = REGA;
+	local tmpB = SRCB;
+	REGC = tmpA - tmpB;
+	subflags(REGC, tmpA, tmpB, 1);
+}
+
+#{ "xnor", 0x96000000, "c,a,b" },
+#{ "xnor", 0x97000000, "c,a,i" },
+:xnor REGC,REGA,SRCB is (OP=0x96|OP=0x97) & REGC & REGA & SRCB
+{
+	REGC = ~(REGA ^ SRCB);
+	resultflags(REGC);
+}
+
+#{ "xor", 0x94000000, "c,a,b" },
+#{ "xor", 0x95000000, "c,a,i" },
+:xor REGC,REGA,SRCB is (OP=0x94|OP=0x95) & REGC & REGA & SRCB
+{
+	REGC = REGA ^ SRCB;
+	resultflags(REGC);
+}
+
+
+# Reserved instructions
+@if defined(WHATISTHIS)
+:trap is OP=0xd8
+{
+	# TODO
+	local tmp:4 = 24;
+	trap(tmp);
+}
+@endif
+@if defined(WHATISTHIS)
+:trap is OP=0xd9
+{
+	# TODO
+	local tmp:4 = 25;
+	trap(tmp);
+}
+@endif
+@if defined(WHATISTHIS)
+:trap is OP=0xda
+{
+	# TODO
+	local tmp:4 = 26;
+	trap(tmp);
+}
+@endif
+@if defined(WHATISTHIS)
+:trap is OP=0xdb
+{
+	# TODO
+	local tmp:4 = 27;
+	trap(tmp);
+}
+@endif
+:trap is OP=0xdc
+{
+	# TODO
+	local tmp:4 = 28;
+	trap(tmp);
+}
+:trap is OP=0xdd
+{
+	# TODO
+	local tmp:4 = 29;
+	trap(tmp);
+}
+@if defined(WHATISTHIS)
+:trap is OP=0xe7
+{
+	# TODO
+	local tmp:4 = 39;
+	trap(tmp);
+}
+@endif
+@if defined(WHATISTHIS)
+:trap is OP=0xe8
+{
+	# TODO
+	local tmp:4 = 40;
+	trap(tmp);
+}
+@endif
+@if defined(WHATISTHIS)
+:trap is OP=0xe9
+{
+	# TODO
+	local tmp:4 = 41;
+	trap(tmp);
+}
+@endif
+:trap is OP=0xf8
+{
+	# TODO
+	local tmp:4 = 56;
+	trap(tmp);
+}
+:trap is OP=0xfa
+{
+	# TODO
+	local tmp:4 = 58;
+	trap(tmp);
+}
+:trap is OP=0xfb
+{
+	# TODO
+	local tmp:4 = 59;
+	trap(tmp);
+}
+:trap is OP=0xfc
+{
+	# TODO
+	local tmp:4 = 60;
+	trap(tmp);
+}
+:trap is OP=0xfd
+{
+	# TODO
+	local tmp:4 = 61;
+	trap(tmp);
+}
+:trap is OP=0xfe
+{
+	# TODO
+	local tmp:4 = 62;
+	trap(tmp);
+}
+:trap is OP=0xff
+{
+	# TODO
+	local tmp:4 = 63;
+	trap(tmp);
+}
