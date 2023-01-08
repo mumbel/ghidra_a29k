@@ -195,8 +195,9 @@ define token instr (32)
   op_P1=(16,23) signed
   op_A0=(0,7)
   op_A1=(16,23)
-  CE=(23,23)
-  CTRL=(16,22)
+  CE=(23,23) dec
+  opCE=(23,23)
+  CTRL=(16,22) dec
   op_v=(16,23)
   SA=(8,15)
   UI=(7,7)
@@ -337,12 +338,9 @@ CONST16NX: imm is op_X0 & op_X1 [ imm = (op_X1 << 8) | op_X0; ] { local tmp:4 = 
 
 CONST16H: imm is op_h0 & op_h1 [ imm = (op_h1 << 8) | op_h0; ] { local tmp:2 = imm; export tmp; }
 
-REL: addr is op_P0 & op_P1 [ addr = inst_start + ((op_P1 << 10) | (op_P0 << 2)); ] { local tmp:4 = addr; export *:4 tmp; }
+TARGET: addr is op_P0 & op_P1 & OPA=0 [ addr = inst_start + ((op_P1 << 10) | (op_P0 << 2)); ] { local tmp:4 = addr; export *:4 tmp; }
 
-ABS: addr is op_A0 & op_A1 [ addr = (op_A1 << 10) | (op_A0 << 2); ] { local tmp:4 = addr; export *:4 tmp; }
-
-TARGET: REL is REL & OPA=0 { export REL; }
-TARGET: ABS is ABS & OPA=1 { export ABS; }
+TARGET: addr is op_A0 & op_A1 & OPA=1 [ addr = (op_A1 << 10) | (op_A0 << 2); ] { local tmp:4 = addr; export *:4 tmp; }
 
 IMM8: imm8 is imm8 { local tmp:4 = imm8; export tmp; }
 
@@ -370,9 +368,6 @@ CC: "geu" is REGA & SRCB & cc=7         { local tmp:4 = zext(REGA >=  SRCB); exp
 
 CR: is epsilon { local tmp:4 = CHC; export tmp;}
 
-LOAD: is CE=0 & SRCB { local tmp:4 = *[ram]:4 SRCB; export tmp; }
-LOAD: is CE=1 & SRCB { local tmp:4 = coprocessor_load(SRCB); export tmp; }
-
 
 ##############################
 # 
@@ -387,22 +382,29 @@ macro resultflags(result) {
     Zf = (result == 0);
 }
 
-macro addflags(result, oper1, oper2, dotrap) {
+macro addflags(result, oper1, oper2) {
     Cf = carry(oper1, oper2);
     Vf = scarry(oper1, oper2);
     resultflags(result);
-    # if ((dotrap == 0:1) || (Cf == 0:1)) goto inst_next;
-    # trap(2:4);
 }
 
-macro subflags(result, oper1, oper2, dotrap) {
+macro addflagstrap(result, oper1, oper2) {
+    addflags(result, oper1, oper2);
+    if (Cf == 0:1) goto inst_next;
+    trap(2:4);
+}
+
+macro subflags(result, oper1, oper2) {
     Cf = oper2 <= oper1;
     Vf = sborrow(oper1, oper2);
     resultflags(result);
-    # if ((dotrap == 0:1) || (Cf == 0:1)) goto inst_next;
-    # trap(2:4);
 }
 
+macro subflagstrap(result, oper1, oper2) {
+    subflags(result, oper1, oper2);
+    if (Cf == 0:1) goto inst_next;
+    trap(2:4);
+}
 
 ##############################
 # 
@@ -417,7 +419,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA:4 = REGA;
 	local tmpB:4 = SRCB;
 	REGC = tmpA + tmpB;
-	addflags(REGC, tmpA, tmpB, 0);
+	addflags(REGC, tmpA, tmpB);
 }
 
 #{ "addc", 0x1c000000, "c,a,b" },
@@ -427,7 +429,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA:4 = REGA;
 	local tmpB:4 = SRCB;
 	REGC = tmpA + tmpB + zext(Cf);
-	addflags(REGC, tmpA, tmpB, 0);
+	addflags(REGC, tmpA, tmpB);
 }
 
 #{ "addcs", 0x18000000, "c,a,b" },
@@ -437,7 +439,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA:4 = REGA;
 	local tmpB:4 = SRCB;
 	REGC = tmpA + tmpB + zext(Cf);
-	addflags(REGC, tmpA, tmpB, 1);
+	addflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "addcu", 0x1a000000, "c,a,b" },
@@ -447,7 +449,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA:4 = REGA;
 	local tmpB:4 = SRCB;
 	REGC = tmpA + tmpB + zext(Cf);
-	addflags(REGC, tmpA, tmpB, 1);
+	addflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "adds", 0x10000000, "c,a,b" },
@@ -457,7 +459,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA:4 = REGA;
 	local tmpB:4 = SRCB;
 	REGC = tmpA + tmpB;
-	addflags(REGC, tmpA, tmpB, 1);
+	addflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "addu", 0x12000000, "c,a,b" },
@@ -467,7 +469,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA:4 = REGA;
 	local tmpB:4 = SRCB;
 	REGC = tmpA + tmpB;
-	addflags(REGC, tmpA, tmpB, 1);
+	addflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "and", 0x90000000, "c,a,b" },
@@ -548,20 +550,22 @@ macro subflags(result, oper1, oper2, dotrap) {
 #{ "const", 0x03000000, "a,x" },
 :const REGA,CONST16X is OP=0x03 & REGA & CONST16X
 {
-	REGA[0,16] = CONST16X;
+	REGA = zext(CONST16X);
 }
 
 #{ "consth", 0x02000000, "a,h" },
 :consth REGA,CONST16H is OP=0x02 & REGA & CONST16H
 {
-	REGA[16,16] = CONST16H;
+	local tmp:4 = REGA;
+	tmp[16,16] = CONST16H;
+	REGA = tmp;
 }
 
 #{ "consthz", 0x05000000, "a,h" },
 :consthz REGA,CONST16H is OP=0x05 & REGA & CONST16H
 {
-	REGA[0,16] = 0;
-	REGA[16,16] = CONST16H;
+	local tmp:4 = zext(CONST16H) << 16;
+	REGA = tmp;
 }
 
 #{ "constn", 0x01000000, "a,X" },
@@ -709,19 +713,31 @@ macro subflags(result, oper1, oper2, dotrap) {
 #{ "div0", 0x69000000, "c,i" },
 :div0 REGC,SRCB is (OP=0x68|OP=0x69) & REGC & SRCB
 {
-	# TODO
+	DFf = 1;
+	Nf = SRCB s< 0;
+	local tmp:8 = ((zext(SRCB) << 32) | zext(Q)) << 1;
+	REGC = tmp[32,32];
+	Q = tmp[0,32];	
 }
 
 #{ "divide", 0xe1000000, "c,a,b" },
 :divide REGC,REGA,REGB is OP=0xe1 & REGC & REGA & REGB
 {
-	# TODO
+	local tmp:8 = (sext(Q) << 32) | zext(REGA);
+	local quot:8 = tmp / sext(REGB);
+	local rem:8 = tmp % sext(REGB);
+	REGC = quot[0,32];
+	Q = rem[0,32];
 }
 
 #{ "dividu", 0xe3000000, "c,a,b" },
 :dividu REGC,REGA,REGB is OP=0xe3 & REGC & REGA & REGB
 {
-	# TODO
+	local tmp:8 = (zext(Q) << 32) | zext(REGA);
+	local quot:8 = tmp / zext(REGB);
+	local rem:8 = tmp % zext(REGB);
+	REGC = quot[0,32];
+	Q = rem[0,32];
 }
 
 #{ "divl", 0x6c000000, "c,a,b" },
@@ -741,7 +757,6 @@ macro subflags(result, oper1, oper2, dotrap) {
 #TODO why isnt this in gcc?
 :dlt REGC,REGA,REGB is OP=0xef & REGC & REGA & REGB & TWINA & TWINB
 {
-	# TODO
 	local tmpA:8 = (zext(REGA) << 32) | zext(TWINA);
 	local tmpB:8 = (zext(REGB) << 32) | zext(TWINB);
 	REGC = zext(tmpA f< tmpB);
@@ -966,7 +981,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 :jmpi REGB is OP=0xc0 & REGB
 {
 	delayslot(1);
-	goto REGB;
+	goto [REGB];
 }
 
 #{ "jmpt", 0xac000000, "a,P" },
@@ -986,23 +1001,33 @@ macro subflags(result, oper1, oper2, dotrap) {
 
 #{ "load", 0x16000000, "e,n,a,b" },
 #{ "load", 0x17000000, "e,n,a,i" },
-:load CE,CTRL,REGA,SRCB is (OP=0x16|OP=0x17) & CE & CTRL & REGA & SRCB & LOAD
+:load CE,CTRL,REGA,SRCB is (OP=0x16|OP=0x17) & CE & opCE=0 & CTRL & REGA & SRCB
 {
-	REGA = LOAD;
+	REGA = *[ram]:4 SRCB;
+}
+:load CE,CTRL,REGA,SRCB is (OP=0x16|OP=0x17) & CE & opCE=1 & CTRL & REGA & SRCB
+{
+	REGA = coprocessor_load(SRCB);
 }
 
 #{ "loadl", 0x06000000, "e,n,a,b" },
 #{ "loadl", 0x07000000, "e,n,a,i" },
-:loadl CE,CTRL,REGA,SRCB is (OP=0x06|OP=0x07) & CE & CTRL & REGA & SRCB & LOAD
+:loadl CE,CTRL,REGA,SRCB is (OP=0x06|OP=0x07) & CE & opCE=0 & CTRL & REGA & SRCB
 {
 	LOCK();
-	REGA = LOAD;
+	REGA = *[ram]:4 SRCB;
+	UNLOCK();
+}
+:loadl CE,CTRL,REGA,SRCB is (OP=0x06|OP=0x07) & CE & opCE=1 & CTRL & REGA & SRCB
+{
+	LOCK();
+	REGA = coprocessor_load(SRCB);
 	UNLOCK();
 }
 
 #{ "loadm", 0x36000000, "e,n,a,b" },
 #{ "loadm", 0x37000000, "e,n,a,i" },
-:loadm CE,CTRL,REGA,SRCB is (OP=0x36|OP=0x37) & CE & CTRL & REGA & SRCB & CR
+:loadm CE,CTRL,REGA,SRCB is (OP=0x36|OP=0x37) & CE & opCE=0 & CTRL & REGA & SRCB & CR
 {
 	local count:4 = 0;
 	local dest:4 = &REGA;
@@ -1014,7 +1039,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	goto <start_load>;
 }
 @if defined(WTF_CE)
-:loadm CE,CTRL,REGA,SRCB is (OP=0x36|OP=0x37) & CE & CTRL & REGA & SRCB & CR
+:loadm CE,CTRL,REGA,SRCB is (OP=0x36|OP=0x37) & CE & opCE=1 & CTRL & REGA & SRCB & CR
 {
 	local count:4 = 0;
 	local dest:4 = &REGA;
@@ -1029,7 +1054,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 
 #{ "loadset", 0x26000000, "e,n,a,b" },
 #{ "loadset", 0x27000000, "e,n,a,i" },
-:loadset CE,CTRL,REGA,SRCB is (OP=0x26|OP=0x27) & CE & CTRL & REGA & SRCB & CR
+:loadset CE,CTRL,REGA,SRCB is (OP=0x26|OP=0x27) & CE & opCE=0 & CTRL & REGA & SRCB & CR
 {	
 	local count:4 = 0;
 	local dest:4 = REGA;
@@ -1046,7 +1071,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	UNLOCK();
 }
 @if defined(WTF_CE)
-:loadset CE,CTRL,REGA,SRCB is (OP=0x26|OP=0x27) & CE & CTRL & REGA & SRCB & CR
+:loadset CE,CTRL,REGA,SRCB is (OP=0x26|OP=0x27) & CE & opCE=1 & CTRL & REGA & SRCB & CR
 {	
 	local count:4 = 0;
 	local dest:4 = REGA;
@@ -1125,27 +1150,29 @@ macro subflags(result, oper1, oper2, dotrap) {
 #{ "multiplu", 0xe2000000, "c,a,b" },
 :multiplu REGC,REGA,REGB is OP=0xe2 & REGC & REGA & REGB
 {
-	# TODO
+	local tmp:8 = zext(REGA) * zext(REGB);
+	REGC = tmp[0,32];
 }
 
 #{ "multiply", 0xe0000000, "c,a,b" },
 :multiply REGC,REGA,REGB is OP=0xe0 & REGC & REGA & REGB
 {
 	local tmp:8 = sext(REGA) * sext(REGB);
-	REGC = tmp[32,32];
-	Q = tmp[0,32];
+	REGC = tmp[0,32];
 }
 
 #{ "multm", 0xde000000, "c,a,b" },
 :multm REGC,REGA,REGB is OP=0xde & REGC & REGA & REGB
 {
-	# TODO
+	local tmp:8 = sext(REGA) * sext(REGB);
+	REGC = tmp[32,32];
 }
 
 #{ "multmu", 0xdf000000, "c,a,b" },
 :multmu REGC,REGA,REGB is OP=0xdf & REGC & REGA & REGB
 {
-	# TODO
+	local tmp:8 = zext(REGA) * zext(REGB);
+	REGC = tmp[32,32];
 }
 
 #{ "mulu", 0x74000000, "c,a,b" },
@@ -1234,12 +1261,12 @@ macro subflags(result, oper1, oper2, dotrap) {
 
 #{ "store", 0x1e000000, "e,n,a,b" },
 #{ "store", 0x1f000000, "e,n,a,i" },
-:store CE,CTRL,REGA,SRCB is (OP=0x1e|OP=0x1f) & CE & CTRL & REGA & SRCB
+:store CE,CTRL,REGA,SRCB is (OP=0x1e|OP=0x1f) & CE & opCE=0 & CTRL & REGA & SRCB
 {
 	*[ram]:4 SRCB = REGA;
 }
 @if defined(WTF_CE)
-:store CE,CTRL,REGA,SRCB is (OP=0x1e|OP=0x1f) & CE & CTRL & REGA & SRCB
+:store CE,CTRL,REGA,SRCB is (OP=0x1e|OP=0x1f) & CE & opCE=1 & CTRL & REGA & SRCB
 {
 	coprocessor_store(SRCB, REGA);
 }
@@ -1247,14 +1274,14 @@ macro subflags(result, oper1, oper2, dotrap) {
 
 #{ "storel", 0x0e000000, "e,n,a,b" },
 #{ "storel", 0x0f000000, "e,n,a,i" },
-:storel CE,CTRL,REGA,SRCB is (OP=0x0e|OP=0x0f) & CE & CTRL & REGA & SRCB
+:storel CE,CTRL,REGA,SRCB is (OP=0x0e|OP=0x0f) & CE & opCE=0 & CTRL & REGA & SRCB
 {
 	LOCK();
 	*[ram]:4 SRCB = REGA;
 	UNLOCK();
 }
 @if defined(WTF_CE)
-:storel CE,CTRL,REGA,SRCB is (OP=0x0e|OP=0x0f) & CE & CTRL & REGA & SRCB
+:storel CE,CTRL,REGA,SRCB is (OP=0x0e|OP=0x0f) & CE & opCE=1 & CTRL & REGA & SRCB
 {
 	LOCK();
 	coprocessor_store(SRCB, REGA);
@@ -1264,7 +1291,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 
 #{ "storem", 0x3e000000, "e,n,a,b" },
 #{ "storem", 0x3f000000, "e,n,a,i" },
-:storem CE,CTRL,REGA,SRCB is (OP=0x3e|OP=0x3f) & CE & CTRL & REGA & SRCB & CR
+:storem CE,CTRL,REGA,SRCB is (OP=0x3e|OP=0x3f) & CE & opCE=0 & CTRL & REGA & SRCB & CR
 {
 	local count:4 = 0;
 	local dest:4 = &REGA;
@@ -1276,7 +1303,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	goto <start_load>;
 }
 @if defined(WTF_CE)
-:storem CE,CTRL,REGA,SRCB is (OP=0x3e|OP=0x3f) & CE & CTRL & REGA & SRCB & CR
+:storem CE,CTRL,REGA,SRCB is (OP=0x3e|OP=0x3f) & CE & opCE=1 & CTRL & REGA & SRCB & CR
 {
 	local count:4 = 0;
 	local dest:4 = &REGA;
@@ -1296,7 +1323,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpA - tmpB;
-	subflags(REGC, tmpA, tmpB, 0);
+	subflags(REGC, tmpA, tmpB);
 }
 
 #{ "subc", 0x2c000000, "c,a,b" },
@@ -1306,7 +1333,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = REGA - SRCB - 1 + zext(Cf);
-	subflags(REGC, tmpA, tmpB, 0);
+	subflags(REGC, tmpA, tmpB);
 }
 
 #{ "subcs", 0x28000000, "c,a,b" },
@@ -1316,7 +1343,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = REGA - SRCB - 1 + zext(Cf);
-	subflags(REGC, tmpA, tmpB, 1);
+	subflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "subcu", 0x2a000000, "c,a,b" },
@@ -1326,7 +1353,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = REGA - SRCB - 1 + zext(Cf);
-	subflags(REGC, tmpA, tmpB, 1);
+	subflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "subr", 0x34000000, "c,a,b" },
@@ -1336,7 +1363,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpB - tmpA;
-	subflags(REGC, tmpB, tmpA, 0);
+	subflags(REGC, tmpB, tmpA);
 }
 
 #{ "subrc", 0x3c000000, "c,a,b" },
@@ -1346,7 +1373,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpB - tmpA - 1 + zext(Cf);
-	subflags(REGC, tmpB, tmpA, 0);
+	subflags(REGC, tmpB, tmpA);
 }
 
 #{ "subrcs", 0x38000000, "c,a,b" },
@@ -1356,7 +1383,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpB - tmpA - 1 + zext(Cf);
-	subflags(REGC, tmpB, tmpA, 1);
+	subflagstrap(REGC, tmpB, tmpA);
 }
 
 #{ "subrcu", 0x3a000000, "c,a,b" },
@@ -1366,7 +1393,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpB - tmpA - 1 + zext(Cf);
-	subflags(REGC, tmpB, tmpA, 1);
+	subflagstrap(REGC, tmpB, tmpA);
 }
 
 #{ "subrs", 0x30000000, "c,a,b" },
@@ -1376,7 +1403,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpB - tmpA;
-	subflags(REGC, tmpB, tmpA, 1);
+	subflagstrap(REGC, tmpB, tmpA);
 }
 
 #{ "subru", 0x32000000, "c,a,b" },
@@ -1386,7 +1413,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpB - tmpA;
-	subflags(REGC, tmpB, tmpA, 1);
+	subflagstrap(REGC, tmpB, tmpA);
 }
 
 #{ "subs", 0x20000000, "c,a,b" },
@@ -1396,7 +1423,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpA - tmpB;
-	subflags(REGC, tmpA, tmpB, 1);
+	subflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "subu", 0x22000000, "c,a,b" },
@@ -1406,7 +1433,7 @@ macro subflags(result, oper1, oper2, dotrap) {
 	local tmpA = REGA;
 	local tmpB = SRCB;
 	REGC = tmpA - tmpB;
-	subflags(REGC, tmpA, tmpB, 1);
+	subflagstrap(REGC, tmpA, tmpB);
 }
 
 #{ "xnor", 0x96000000, "c,a,b" },
